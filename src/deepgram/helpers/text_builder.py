@@ -247,10 +247,11 @@ def ssml_to_deepgram(ssml_text: str) -> str:
     def replace_phoneme(match):
         attributes = match.group(1)
         word = match.group(2)
-        ph_match = re.search(r'ph=["\'](.*?)["\']', attributes)
-        if ph_match is None:
+        alphabet_match = re.search(r'(?:^|\s)alphabet\s*=\s*(["\'])ipa\1(?=\s|$)', attributes)
+        ph_match = re.search(r'(?:^|\s)ph\s*=\s*(["\'])(.*?)\1(?=\s|$)', attributes)
+        if alphabet_match is None or ph_match is None:
             return word
-        ipa = ph_match.group(1)
+        ipa = ph_match.group(2)
         return json.dumps({"word": word, "pronounce": ipa}, ensure_ascii=False)
 
     ssml_text = re.sub(phoneme_pattern, replace_phoneme, ssml_text)
