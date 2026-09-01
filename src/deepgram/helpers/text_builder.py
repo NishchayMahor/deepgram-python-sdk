@@ -242,7 +242,7 @@ def ssml_to_deepgram(ssml_text: str) -> str:
     # Handle <phoneme> tags. Attribute order is not significant in SSML, so match
     # the attributes as a group and pull `ph` out of it rather than requiring
     # `alphabet` before `ph` (which silently dropped the pronunciation otherwise).
-    phoneme_pattern = r"<phoneme\s+([^>]*?)\s*>(.*?)</phoneme>"
+    phoneme_pattern = r"<phoneme\s+([^<>]*?)\s*>([^<]*)</phoneme>"
 
     def replace_phoneme(match):
         attributes = match.group(1)

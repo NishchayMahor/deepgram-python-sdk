@@ -268,6 +268,18 @@ class TestSsmlToDeepgram:
 
         assert ssml_to_deepgram(ssml) == "medicine"
 
+    def test_unclosed_phoneme_does_not_consume_following_phoneme(self):
+        """Malformed input must not capture a later valid phoneme tag"""
+        ssml = (
+            '<phoneme alphabet="ipa" ph="bad">'
+            '<phoneme ph="good" alphabet="ipa">medicine</phoneme>'
+        )
+        result = ssml_to_deepgram(ssml)
+
+        assert '"word": "medicine"' in result
+        assert '"pronounce": "good"' in result
+        assert '"pronounce": "bad"' not in result
+
     def test_basic_break(self):
         """Test converting break tag (milliseconds)"""
         ssml = '<break time="500ms"/>'
